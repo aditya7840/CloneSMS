@@ -12,7 +12,7 @@ export const supabase = createClient(supabaseUrl || '', supabaseKey || '');
 
 // --- TYPES ---
 export interface Event {
-  id: number;
+  id: string;
   title: string;
   description: string;
   start_time: string;

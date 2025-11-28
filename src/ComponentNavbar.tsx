@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Search, Bell } from 'lucide-react';
 import { cn } from './Utils';
+import { useAuth } from './hooks/useAuth';
+import { UserMenu } from './components/UI/UserMenu';
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 0);
@@ -34,11 +37,15 @@ export const Navbar = () => {
       <div className="flex items-center gap-6 text-white">
         <Search className="w-5 h-5 cursor-pointer hover:text-gray-300 transition-colors" />
         <Bell className="w-5 h-5 cursor-pointer hover:text-gray-300 transition-colors" />
-        <Link to="/my-list" className="flex items-center gap-2 cursor-pointer">
-          <div className="w-8 h-8 rounded bg-blue-600 flex items-center justify-center font-bold hover:bg-blue-700 transition-colors">
-            S
-          </div>
-        </Link>
+        {user ? (
+          <UserMenu />
+        ) : (
+          <Link to="/login" className="flex items-center gap-2 cursor-pointer">
+            <div className="px-4 py-2 rounded bg-gradient-to-r from-pink-600 to-violet-600 font-bold hover:shadow-lg transition-all text-sm">
+              Login
+            </div>
+          </Link>
+        )}
       </div>
     </nav>
   );
