@@ -4,3 +4,7 @@ Hi my name is krishna this is the clone version of sort my scene https://sortmys
 We are using GEmini 3 to create PRD (Project Requirement Document)
 
 Please Install DOCX/ODT VIEWER or any other Extention to see the docx in visual code
+
+PLease install The dependencies using ::  npm install
+
+Please run the vite server by npm run dev
