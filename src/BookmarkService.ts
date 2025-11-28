@@ -1,5 +1,5 @@
 // --- BOOKMARK/MY LIST SERVICE (Using localStorage) ---
-import { Event } from './ApiService';
+import { Event } from './services/ApiService';
 
 const BOOKMARKS_KEY = 'sceneflix_bookmarks';
 
@@ -29,7 +29,7 @@ export const BookmarkService = {
   },
 
   // Remove event from bookmarks
-  removeBookmark(eventId: number): void {
+  removeBookmark(eventId: string | number): void {
     try {
       const bookmarks = this.getBookmarks();
       const filtered = bookmarks.filter(b => b.id !== eventId);
@@ -40,7 +40,7 @@ export const BookmarkService = {
   },
 
   // Check if event is bookmarked
-  isBookmarked(eventId: number): boolean {
+  isBookmarked(eventId: string | number): boolean {
     return this.getBookmarks().some(b => b.id === eventId);
   },
 

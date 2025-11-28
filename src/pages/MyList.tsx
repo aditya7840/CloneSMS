@@ -12,7 +12,7 @@ export const MyList = () => {
     setBookmarkedEvents(bookmarks);
   }, []);
 
-  const handleRemoveBookmark = (eventId: number) => {
+  const handleRemoveBookmark = (eventId: string) => {
     BookmarkService.removeBookmark(eventId);
     setBookmarkedEvents(BookmarkService.getBookmarks());
   };
