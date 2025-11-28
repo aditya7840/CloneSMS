@@ -6,7 +6,7 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, fullName: string) => Promise<void>;
+  signup: (email: string, password: string, fullName: string) => Promise<{ needsConfirmation: boolean }>;
   logout: () => Promise<void>;
   updateProfile: (updates: Partial<AuthUser>) => Promise<void>;
 }
@@ -67,10 +67,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     email: string,
     password: string,
     fullName: string
-  ) => {
+  ): Promise<{ needsConfirmation: boolean }> => {
     try {
       setError(null);
-      const { error: signupError } = await AuthService.signup(
+      const { error: signupError, needsConfirmation } = await AuthService.signup(
         email,
         password,
         fullName
@@ -78,8 +78,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       if (signupError) throw signupError;
 
-      const currentUser = await AuthService.getCurrentUser();
-      setUser(currentUser);
+      // Only try to get current user if we have a session
+      if (!needsConfirmation) {
+        const currentUser = await AuthService.getCurrentUser();
+        setUser(currentUser);
+      }
+
+      return { needsConfirmation: needsConfirmation || false };
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Signup failed';
       setError(message);

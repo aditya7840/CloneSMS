@@ -24,6 +24,7 @@ export const AuthService = {
           data: {
             full_name: fullName,
           },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
@@ -31,18 +32,28 @@ export const AuthService = {
 
       // Create user profile
       if (data.user) {
-        await supabase.from('user_profiles').insert({
+        const { error: profileError } = await supabase.from('user_profiles').insert({
           id: data.user.id,
           email: data.user.email,
           full_name: fullName,
           role: 'user',
         });
+
+        if (profileError) {
+          console.warn('Profile creation warning:', profileError);
+          // Don't throw here - profile can be created later
+        }
       }
 
-      return { user: data.user, error: null };
+      return {
+        user: data.user,
+        session: data.session,
+        error: null,
+        needsConfirmation: !data.session, // If no session, email confirmation is required
+      };
     } catch (error) {
       console.error('Signup error:', error);
-      return { user: null, error };
+      return { user: null, session: null, error, needsConfirmation: false };
     }
   },
 
@@ -54,7 +65,14 @@ export const AuthService = {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        // Check if it's an unconfirmed email error
+        if (error.message?.includes('Email not confirmed') || error.message?.includes('not verified')) {
+          throw new Error('Please confirm your email before logging in. Check your email for the confirmation link.');
+        }
+        throw error;
+      }
+
       return { user: data.user, session: data.session, error: null };
     } catch (error) {
       console.error('Login error:', error);

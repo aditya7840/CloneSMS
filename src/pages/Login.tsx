@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, AlertCircle, Info } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 export const Login = () => {
@@ -9,12 +9,14 @@ export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setInfo('');
     setLoading(true);
 
     try {
@@ -23,9 +25,20 @@ export const Login = () => {
       }
 
       await login(email, password);
-      navigate('/');
+      setInfo('Login successful! Redirecting...');
+      setTimeout(() => navigate('/'), 1500);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      const errorMsg = err instanceof Error ? err.message : 'Login failed';
+      
+      // Check for email confirmation needed
+      if (errorMsg.includes('Email not confirmed') || errorMsg.includes('not verified')) {
+        setError('Your email has not been confirmed yet. Please check your email for the confirmation link.');
+        setInfo('Didn\'t receive an email? Try signing up again.');
+      } else if (errorMsg.includes('Invalid login credentials')) {
+        setError('Email or password is incorrect. Please try again.');
+      } else {
+        setError(errorMsg);
+      }
     } finally {
       setLoading(false);
     }
@@ -46,7 +59,23 @@ export const Login = () => {
           {/* Error Alert */}
           {error && (
             <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
-              <p className="text-red-400 text-sm">{error}</p>
+              <div className="flex gap-3">
+                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-red-400 text-sm font-medium">{error}</p>
+                  {info && <p className="text-red-300 text-xs mt-2">{info}</p>}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Info Alert */}
+          {info && !error && (
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+              <div className="flex gap-3">
+                <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                <p className="text-blue-400 text-sm">{info}</p>
+              </div>
             </div>
           )}
 
