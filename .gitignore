@@ -1,0 +1,30 @@
+# Environment variables (NEVER commit these to git!)
+.env
+.env.local
+.env.production.local
+.env.development.local
+.env.test.local
+
+# Dependencies
+node_modules
+*.pnp
+.pnp.js
+
+# Build
+dist
+build
+.turbo
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vite
+.vite
