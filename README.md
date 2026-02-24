@@ -1,5 +1,8 @@
 # CloneSMS
-CLone of Sort My Scene
+CLone of Sort My Scene  https://clone-flix-rho.vercel.app/
+
+The deployement is done using Vercel 
+THe db used is Supabase
 This is the clone version of sort my scene https://sortmyscene.com/ We have created our own netflix kind clone SceneFlix
 We are using GEmini 3 to create PRD (Project Requirement Document)
 
